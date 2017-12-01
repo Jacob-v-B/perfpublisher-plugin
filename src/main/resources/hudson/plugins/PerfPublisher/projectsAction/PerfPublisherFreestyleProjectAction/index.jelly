@@ -13,6 +13,40 @@
                 <img src="metrics/${metric}"/>
             </j:forEach>
          </div>
+			<div id="test"></div>
+			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+			<script>
+				var metricraw = '${it.json}';
+				var metricObject = JSON.parse(metricraw);
+				for(metric in metricObject){
+					var dataArray = []; // Unique DataArray for every metric to be added to respective plotly chart
+
+					for(test in metricObject[metric]){
+						var trace = {};
+						var x = [];
+						var y = [];
+						for(var dataPoint = 0; dataPoint &lt; metricObject[metric][test].length; dataPoint++){
+
+							x.push(metricObject[metric][test][dataPoint][0]);
+							y.push(metricObject[metric][test][dataPoint][2]);
+						}
+						trace.x = x; //add x to trace
+						trace.y = y; //add y to trace
+						trace.name = test; //add name of test as the trace name
+
+						dataArray.push(trace);
+
+						//console.log(dataArray);
+
+					}
+
+				var newGraphDiv = document.createElement("div"); //create new div that will hold our graph
+				newGraphDiv.id = metric;
+				var mainpanel = document.querySelector("#main-panel"); //get root document
+				mainpanel.appendChild(newGraphDiv);
+				Plotly.plot(metric, dataArray, {title: metric}); //create new plot for each metric
+				}
+			</script>
          <table border="1px" class="pane sortable">
                <tr>
          			<td class="pane-header" title="Build number">Build number</td>
